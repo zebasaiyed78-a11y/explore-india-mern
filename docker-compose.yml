@@ -1,0 +1,36 @@
+
+services:
+  mongo:
+    image: mongo:8
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - "db.adminCommand('ping').ok"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      PORT: "5000"
+      MONGO_URI: mongodb://mongo:27017/explore_india
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET before starting Compose}
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
