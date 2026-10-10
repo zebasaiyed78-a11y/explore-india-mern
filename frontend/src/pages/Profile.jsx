@@ -1,0 +1,9 @@
+import { useEffect, useState } from 'react';
+import { api, getErrorMessage } from '../api/apiClient';
+
+export default function Profile({ user, onAgent }) {
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { (async () => { try { const response = await api.getPlans(); setPlans(response.data); } catch (_) {} finally { setLoading(false); } })(); }, []);
+  return <div className="page-shell"><div className="container page-intro"><span className="eyebrow">TRAVEL DESK</span><h1>Hello, <em>{user?.name?.split(' ')[0] || 'traveller'}.</em></h1><p>{user?.email}</p></div><main className="container profile-grid"><section className="profile-card"><span className="eyebrow">ACCOUNT</span><div className="profile-avatar">{user?.name?.slice(0, 1).toUpperCase()}</div><h2>{user?.name}</h2><p>{user?.email}</p><div className="profile-stats"><div><strong>{user?.favorites?.length || 0}</strong><span>Favourites</span></div><div><strong>{plans.length}</strong><span>Saved plans</span></div></div><button className="dark-btn full" onClick={onAgent}>Talk to an agent</button></section><section className="plans-card"><div className="section-title-row"><div><span className="eyebrow">MONGODB RECORDS</span><h2>Your saved plans</h2></div></div>{loading ? <div className="loading-panel">Loading saved plans…</div> : plans.length ? plans.map((plan) => <article className="saved-plan" key={plan._id}><div><span>{new Date(plan.createdAt).toLocaleDateString('en-IN')}</span><h3>{plan.answers?.route || 'Custom India trip'}</h3></div><div>{['days','style','budget','region'].map((key) => plan.answers?.[key] ? <span key={key} className="badge">{plan.answers[key]}</span> : null)}</div></article>) : <div className="empty-inline"><h3>No saved plans yet.</h3><p>Use the planner to save your first route.</p></div>}</section></main></div>;
+}

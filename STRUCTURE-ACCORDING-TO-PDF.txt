@@ -1,0 +1,25 @@
+EXPLORE INDIA — GUIDELINE MAPPING
+
+PDF requirement                         Project implementation
+---------------------------------------------------------------
+Root folder MyMernApp                   ExploreIndia/
+backend/                                backend/
+backend/models/Item.js                  backend/models/Item.js
+backend/routes/items.js                 backend/routes/items.js
+backend/.env                            backend/.env
+backend/package.json                    backend/package.json
+backend/server.js                       backend/server.js
+frontend/                               frontend/
+frontend/src/api/apiClient.js           frontend/src/api/apiClient.js
+frontend/src/components/ItemForm.jsx    frontend/src/components/ItemForm.jsx
+frontend/src/components/ItemList.jsx    frontend/src/components/ItemList.jsx
+frontend/src/App.jsx                    frontend/src/App.jsx
+React JSX + Vite                        Yes
+Node.js + Express                       Yes
+MongoDB + Mongoose                      Yes
+Axios                                    Yes
+React Router                             Yes
+CRUD                                     Yes: /api/items
+Two-terminal run method                 Yes
+Frontend port                            5173
+Backend port                             5000
