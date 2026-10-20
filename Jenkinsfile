@@ -71,34 +71,34 @@ pipeline {
             }
         }
 
-        stage('09 - Deploy Application') {
+        
+stage('09 - Deploy Application') {
     steps {
-        echo 'Deploying Explore India application...'
+        echo 'Building and deploying Explore India...'
         bat 'docker compose -p explore-india-ci up -d --build'
     }
 }
-        }
 
-        stage('10 - Verify Deployment') {
+stage('10 - Verify Deployment') {
     steps {
-        echo 'Checking deployed containers...'
-        bat 'docker compose -p explore-india-ci ps'
-        echo 'Checking API health...'
-        bat 'curl.exe --retry 15 --retry-delay 2 --retry-connrefused --fail --silent --show-error http://localhost:5001/api/health'
-    }
-}
-        }
-    }
+        echo 'Waiting for Explore India API to become ready...'
 
-    post {
-        success {
-            echo 'SUCCESS: All Explore India pipeline stages completed!'
-        }
-        failure {
-            echo 'FAILED: Check the first failed stage in Console Output.'
-        }
-        always {
-            echo 'Explore India CI/CD pipeline execution finished.'
-        }
+        bat '''
+            @echo off
+            curl.exe --retry 30 --retry-delay 2 --retry-all-errors --retry-max-time 90 --fail --silent --show-error http://localhost:5001/api/health
+
+            if errorlevel 1 (
+                echo.
+                echo ERROR: API health check failed.
+                echo Docker container status:
+                docker compose -p explore-india-ci ps
+                echo Recent backend logs:
+                docker compose -p explore-india-ci logs --tail 100 app
+                exit /b 1
+            )
+
+            echo.
+            echo SUCCESS: Explore India API health check passed.
+        '''
     }
 }
