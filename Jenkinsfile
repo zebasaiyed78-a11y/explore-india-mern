@@ -72,20 +72,21 @@ pipeline {
         }
 
         stage('09 - Deploy Application') {
-            steps {
-                echo 'Starting the application and database...'
-                bat 'docker compose up -d'
-            }
+    steps {
+        echo 'Deploying Explore India application...'
+        bat 'docker compose -p explore-india-ci up -d --build'
+    }
+}
         }
 
         stage('10 - Verify Deployment') {
-            steps {
-                echo 'Checking container status...'
-                bat 'docker compose ps'
-
-                echo 'Checking the application health endpoint...'
-                bat 'curl.exe --retry 15 --retry-delay 2 --retry-connrefused --fail --silent --show-error http://localhost:5001/api/health'
-            }
+    steps {
+        echo 'Checking deployed containers...'
+        bat 'docker compose -p explore-india-ci ps'
+        echo 'Checking API health...'
+        bat 'curl.exe --retry 15 --retry-delay 2 --retry-connrefused --fail --silent --show-error http://localhost:5001/api/health'
+    }
+}
         }
     }
 
