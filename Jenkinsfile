@@ -2,21 +2,26 @@
 pipeline {
     agent any
 
+    environment {
+        JWT_SECRET = credentials('explore-india-jwt-secret')
+    }
+
     options {
         timestamps()
-        disableConcurrentBuilds()
+        ansiColor('xterm')
     }
 
     stages {
-        stage('1 - Checkout Code') {
+        stage('01 - Checkout Code') {
             steps {
+                echo 'Checking out Explore India source code...'
                 checkout scm
-                echo 'Source code downloaded from GitHub.'
             }
         }
 
-        stage('2 - Check Tools') {
+        stage('02 - Check Tools') {
             steps {
+                echo 'Checking Node.js, npm and Docker...'
                 bat 'node --version'
                 bat 'npm --version'
                 bat 'docker --version'
@@ -24,73 +29,61 @@ pipeline {
             }
         }
 
-        stage('3 - Install Backend') {
+        stage('03 - Install Backend') {
             steps {
+                echo 'Installing backend dependencies...'
                 bat 'npm ci --prefix backend'
             }
         }
 
-        stage('4 - Install Frontend') {
+        stage('04 - Install Frontend') {
             steps {
+                echo 'Installing frontend dependencies...'
                 bat 'npm ci --prefix frontend'
             }
         }
 
-        stage('5 - Validate Backend') {
+        stage('05 - Validate Backend') {
             steps {
+                echo 'Checking backend JavaScript syntax...'
                 bat 'node --check backend/server.js'
-                echo 'Backend syntax check passed.'
             }
         }
 
-        stage('6 - Build Frontend') {
+        stage('06 - Build Frontend') {
             steps {
+                echo 'Building the frontend for production...'
                 bat 'npm run build --prefix frontend'
             }
         }
 
-        stage('7 - Validate Docker Compose') {
+        stage('07 - Validate Compose') {
             steps {
-                withCredentials([
-                    string(
-                        credentialsId: 'explore-india-jwt-secret',
-                        variable: 'JWT_SECRET'
-                    )
-                ]) {
-                    bat 'docker compose config --quiet'
-                }
+                echo 'Validating Docker Compose configuration...'
+                bat 'docker compose config --quiet'
             }
         }
 
-        stage('8 - Build Docker Image') {
+        stage('08 - Build Docker Images') {
             steps {
-                withCredentials([
-                    string(
-                        credentialsId: 'explore-india-jwt-secret',
-                        variable: 'JWT_SECRET'
-                    )
-                ]) {
-                    bat 'docker compose build app'
-                }
+                echo 'Building Explore India Docker images...'
+                bat 'docker compose build app'
             }
         }
 
-        stage('9 - Deploy Application') {
+        stage('09 - Deploy Application') {
             steps {
-                withCredentials([
-                    string(
-                        credentialsId: 'explore-india-jwt-secret',
-                        variable: 'JWT_SECRET'
-                    )
-                ]) {
-                    bat 'docker compose up -d'
-                }
+                echo 'Starting the application and database...'
+                bat 'docker compose up -d'
             }
         }
 
         stage('10 - Verify Deployment') {
             steps {
+                echo 'Checking container status...'
                 bat 'docker compose ps'
+
+                echo 'Checking the application health endpoint...'
                 bat 'curl.exe --retry 15 --retry-delay 2 --retry-connrefused --fail --silent --show-error http://localhost:5001/api/health'
             }
         }
@@ -98,17 +91,13 @@ pipeline {
 
     post {
         success {
-            echo 'SUCCESS: Explore India CI/CD completed!'
-            echo 'Application: http://localhost:5001'
-            echo 'Health check: http://localhost:5001/api/health'
+            echo 'SUCCESS: All Explore India pipeline stages completed!'
         }
-
         failure {
-            echo 'FAILED: Check the first red stage and its Console Output.'
+            echo 'FAILED: Check the first failed stage in Console Output.'
         }
-
         always {
-            echo 'Explore India pipeline run finished.'
+            echo 'Explore India CI/CD pipeline execution finished.'
         }
     }
 }
