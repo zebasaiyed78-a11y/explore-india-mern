@@ -45,14 +45,13 @@ const destinations = [
     blurb: 'Ancient stepwells, salt deserts and a rich textile tradition.',
     description: 'Explore Ahmedabad heritage, the Rann of Kutch landscapes and the region’s crafts and cuisine.',
     bestTime: 'November – February', explore: ['Rann of Kutch', 'Ahmedabad', 'Gir'], budget: '₹14,000 – ₹25,000', duration: '3–5 days',
-    gradient: '#7d5a19,#edce84', image: 'https://images.unsplash.com/photo-1598889412930-5f7a2fbe1ab8?auto=format&fit=crop&w=1400&q=85'
-  },
+    gradient: '#7d5a19,#edce84', image: 'https://images.unsplash.com/photo-1708147943714-730df4f54ba6?auto=format&fit=crop&w=1200&q=80'
   {
     name: 'Karnataka', slug: 'karnataka', state: 'Karnataka', category: 'Heritage', rating: 4.7,
     blurb: 'Ruined empires at Hampi, coffee hills and royal Mysuru.',
     description: 'A diverse route with history, coffee-country landscapes and elegant palace architecture.',
     bestTime: 'October – February', explore: ['Hampi', 'Coorg', 'Mysuru'], budget: '₹18,000 – ₹32,000', duration: '4–6 days',
-    gradient: '#6c2b76,#e98d8b', image: 'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?auto=format&fit=crop&w=1400&q=85'
+    gradient: '#6c2b76,#e98d8b', image: 'https://images.unsplash.com/photo-1689946727918-86aa5c584447?auto=format&fit=crop&w=1200&q=80'
   },
   {
     name: 'Uttarakhand', slug: 'uttarakhand', state: 'Uttarakhand', category: 'Spiritual', rating: 4.7,
@@ -73,8 +72,7 @@ const destinations = [
     blurb: 'Moonlit monasteries and high mountain passes at the roof of India.',
     description: 'A dramatic high-altitude journey through Leh, Nubra and Pangong with plenty of room for slow acclimatisation.',
     bestTime: 'June – September', explore: ['Leh', 'Nubra', 'Pangong'], budget: '₹28,000 – ₹45,000', duration: '5–7 days',
-    gradient: '#31506b,#c9d6df', image: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1400&q=85'
-  },
+    gradient: '#31506b,#c9d6df', image: 'https://images.unsplash.com/photo-1636800877579-b69375ae9532?auto=format&fit=crop&w=1200&q=80'
   {
     name: 'Andaman', slug: 'andaman', state: 'Andaman & Nicobar', category: 'Beach', rating: 4.8,
     blurb: 'Clear lagoons, coral reefs and white-sand island mornings.',
@@ -102,7 +100,6 @@ const itineraries = [
   await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/explore_india');
   await Item.deleteMany({});
   await Itinerary.deleteMany({});
-  await User.deleteMany({});
   await Item.insertMany(destinations);
   await Itinerary.insertMany(itineraries);
   console.log(`✓ Seeded ${destinations.length} destinations and ${itineraries.length} itineraries.`);
